@@ -149,5 +149,8 @@
       }
     }
   },
-  "defaultProject": "ng-xmly"
+  "defaultProject": "ng-xmly",
+  "cli": {
+    "analytics": "104160dc-780c-4898-a396-519c1e89a27b"
+  }
 }

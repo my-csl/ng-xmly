@@ -53,7 +53,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/assets/styles/index.scss"
             ],
             "scripts": []
           },
@@ -116,7 +116,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/assets/styles/index.scss"
             ],
             "scripts": []
           }

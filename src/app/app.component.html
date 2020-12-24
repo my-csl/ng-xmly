@@ -1,1 +1,17 @@
-<app-header></app-header>
+<div id="xm">
+  <app-header></app-header>
+  <div class="content">
+    <div class="container">
+      <div class="breadcrumb-warp">
+        <app-breadcrumb [xmSeparator]="mySeparator">
+          <app-breadcrumb-item>全部</app-breadcrumb-item>
+          <app-breadcrumb-item>一级</app-breadcrumb-item>
+          <app-breadcrumb-item>二级</app-breadcrumb-item>
+          <ng-template #mySeparator>
+            <b>/</b>
+          </ng-template>
+        </app-breadcrumb>
+      </div>
+    </div>
+  </div>
+</div>

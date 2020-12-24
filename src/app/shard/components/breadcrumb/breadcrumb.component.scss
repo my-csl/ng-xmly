@@ -1,0 +1,15 @@
+.bread-crumb {
+  display: flex;
+  align-items: center;
+  color: #72727b;
+  app-breadcrumb-item {
+    &:last-child {
+      .bread-crumb-item{
+        .content { color: rgba(0, 0, 0, 0.5); }
+        .separator {
+          display: none;
+        }
+      }
+    }
+  }
+}

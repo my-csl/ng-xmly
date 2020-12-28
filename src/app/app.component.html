@@ -2,16 +2,28 @@
   <app-header></app-header>
   <div class="content">
     <div class="container">
-      <div class="breadcrumb-warp">
-        <app-breadcrumb [xmSeparator]="mySeparator">
-          <app-breadcrumb-item>全部</app-breadcrumb-item>
-          <app-breadcrumb-item>一级</app-breadcrumb-item>
-          <app-breadcrumb-item>二级</app-breadcrumb-item>
-          <ng-template #mySeparator>
-            <b>/</b>
-          </ng-template>
+      <div class="breadcrumb-wrap">
+        <app-breadcrumb>
+          <app-breadcrumb-item>全部分类</app-breadcrumb-item>
+          <app-breadcrumb-item>
+            <div class="sub-category">
+              <div class="handler">
+                <span class="current">{{currentCategory?.displayName}}</span>
+                <i class="arrow"></i>
+              </div>
+              <div class="category-box">
+                <ul>
+                  <li (click)="changeCategory(item)" [class.checked]="item.id === currentCategory?.id" *ngFor="let item of categories;">{{item.displayName}}</li>
+                </ul>
+              </div>
+            </div>
+          </app-breadcrumb-item>
+          <!--<ng-container *ngFor="let item of subcategory">
+            <app-breadcrumb-item *ngIf="item">{{ item }}</app-breadcrumb-item>
+          </ng-container>-->
         </app-breadcrumb>
       </div>
+      <router-outlet></router-outlet>
     </div>
   </div>
 </div>

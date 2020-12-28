@@ -3,9 +3,11 @@
     <ng-content></ng-content>
   </div>
   <div class="separator">
-    <ng-container [ngTemplateOutlet]="parent.xmSeparator || defaultSeparator"></ng-container>
+    <span *appStrTplOutlet="parent.xmSeparator; context: myContext">{{parent.xmSeparator}}</span>
+    <!--<ng-container [ngTemplateOutlet]="parent.xmSeparator || defaultSeparator"></ng-container>
     <ng-template #defaultSeparator>
       <span>&gt;</span>
-    </ng-template>
+    </ng-template>-->
   </div>
 </div>
+

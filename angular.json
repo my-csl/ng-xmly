@@ -90,7 +90,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "ng-xmly:build"
+            "browserTarget": "ng-xmly:build",
+            "proxyConfig": "src/proxy.conf.json"
           },
           "configurations": {
             "production": {

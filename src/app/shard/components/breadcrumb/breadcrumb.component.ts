@@ -9,7 +9,7 @@ import {ChangeDetectionStrategy, Component, Input, OnInit, TemplateRef, ViewEnca
 })
 export class BreadcrumbComponent implements OnInit {
 
-  @Input() xmSeparator: TemplateRef<any> | undefined;
+  @Input() xmSeparator: TemplateRef<any> | string = '>';
 
   constructor() { }
 

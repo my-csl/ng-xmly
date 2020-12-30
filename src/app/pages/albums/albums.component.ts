@@ -1,9 +1,16 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {AlbumArgs, AlbumService, CategoryInfo} from '../../services/apis/album.service';
-import {SubCategory} from '../../services/apis/types';
+import {MetaData, MetaValue, SubCategory} from '../../services/apis/types';
 import {CategoryService} from '../../services/business/category.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {combineLatest} from 'rxjs';
+import {withLatestFrom} from 'rxjs/operators';
+
+interface CheckedMeta {
+  metaRowId: number;
+  metaRowName: string;
+  metaId: number;
+  metaName: string;
+}
 
 @Component({
   selector: 'app-albums',
@@ -22,6 +29,7 @@ export class AlbumsComponent implements OnInit {
     perPage: 30
   };
   categoryInfo: CategoryInfo | undefined;
+  checkedMetas: CheckedMeta[] = [];
 
   constructor(
     private albumService: AlbumService,
@@ -33,16 +41,18 @@ export class AlbumsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    combineLatest(this.activatedRoute.paramMap, this.categoryService.getCategory()).subscribe(
+    this.activatedRoute.paramMap.pipe(
+      withLatestFrom(this.categoryService.getCategory())
+    ).subscribe(
       ([paramMap, category]) => {
         const pinyin = paramMap.get('pinyin');
-        if (pinyin === category) {
-          this.searchParams.category = pinyin;
-          this.updatePageDatas();
-        } else {
+        if (pinyin !== category) {
           this.categoryService.setCategory(pinyin!);
-          this.router.navigateByUrl('/albums/' + pinyin);
         }
+        this.searchParams.category = pinyin!;
+        this.searchParams.subcategory = '';
+        this.categoryService.setSubCategory([]);
+        this.updatePageDatas();
       }
     );
   }
@@ -58,8 +68,51 @@ export class AlbumsComponent implements OnInit {
 
   changeSubCategory(item?: SubCategory) {
     if (this.searchParams.subcategory !== item?.code) {
+      this.categoryService.setSubCategory([item?.displayValue!]);
       this.searchParams.subcategory = item?.code || '';
       this.updatePageDatas();
     }
+  }
+
+  changeMate(row: MetaData, item: MetaValue) {
+    this.checkedMetas.push({
+      metaRowId: row.id,
+      metaRowName: row.name,
+      metaId: item.id,
+      metaName: item.displayName,
+    });
+
+    this.getSearchParamsMate();
+  }
+
+  showMateRow(name: string) {
+    if (this.checkedMetas.length) {
+      return this.checkedMetas.findIndex(item => item.metaRowName === name) === -1;
+    }
+    return true;
+  }
+
+  unCheckMate(item: CheckedMeta | 'clear') {
+    if (item === 'clear') {
+      this.checkedMetas = [];
+      this.searchParams.meta = '';
+    } else {
+      const index = this.checkedMetas.findIndex(value => {
+        return item.metaRowId === value.metaRowId && item.metaId === value.metaId;
+      });
+      if (index > -1) {
+        this.checkedMetas.splice(index, 1);
+        this.searchParams.meta = this.getSearchParamsMate();
+      }
+    }
+  }
+
+  private getSearchParamsMate(): string {
+    let result = '';
+    this.checkedMetas.forEach(value => {
+      result += value.metaRowId + '_' + value.metaId + '-';
+    });
+    // console.log('result', result.slice(0, -1));
+    return result.slice(0, -1);
   }
 }

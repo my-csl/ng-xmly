@@ -12,11 +12,24 @@
     </ul>
   </div>
   <div class="conditions">
-    <div class="row" *ngFor="let row of categoryInfo?.metadata">
-      <b class="title">{{row.displayName}}</b>
+    <ng-container *ngFor="let row of categoryInfo?.metadata">
+      <div class="row" *ngIf="showMateRow(row.name)">
+        <b class="title">{{row.name}}</b>
+        <ul class="tabs">
+          <li class="tag" (click)="changeMate(row, item)" *ngFor="let item of row?.metaValues">{{item.displayName}}</li>
+        </ul>
+      </div>
+    </ng-container>
+    <!--三级分类筛选-->
+    <div class="row checked-conditions" *ngIf="checkedMetas.length">
+      <b class="title">已筛选</b>
       <ul class="tabs">
-        <li class="tag" *ngFor="let item of row?.metaValues">{{item.displayName}}</li>
+        <li class="tag" (click)="unCheckMate(item)" *ngFor="let item of checkedMetas">
+          <span class="label-title">{{item.metaRowName}}</span> |
+          <span>{{item.metaName}}</span>
+        </li>
       </ul>
+      <a class="clear" (click)="unCheckMate('clear')">清除全部</a>
     </div>
   </div>
   <div class="albums">

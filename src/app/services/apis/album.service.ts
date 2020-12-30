@@ -4,7 +4,6 @@ import {Observable} from 'rxjs';
 import {Album, AlbumInfo, Anchor, Base, Category, MetaData, SubCategory, TracksInfo} from './types';
 import {environment} from '../../../environments/environment';
 import {map} from 'rxjs/operators';
-import {stringify} from 'qs';
 
 export interface CategoryInfo {
   category: Category;
@@ -67,9 +66,8 @@ export class AlbumService {
 
   // 二、三级分类列表
   detailCategoryPageInfo(args: Pick<AlbumArgs, 'category' | 'subcategory'>): Observable<CategoryInfo> {
-    const params = new HttpParams({fromString: stringify(args)});
     return this.http
-      .get(`${environment.baseUrl}${this.prefix}categories`, {params})
+      .get(`${environment.baseUrl}${this.prefix}categories`, {params: args})
       .pipe(
         // @ts-ignore
         map((res: Base<CategoryInfo>) => res.data)

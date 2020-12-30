@@ -3,6 +3,7 @@ import {AlbumService} from './services/apis/album.service';
 import {Category} from './services/apis/types';
 import {CategoryService} from './services/business/category.service';
 import {Router} from '@angular/router';
+import {combineLatest} from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +19,7 @@ export class AppComponent implements OnInit {
   subcategory: string[] = [];
 
   constructor(
-    private albymService: AlbumService,
+    private albumService: AlbumService,
     private cdr: ChangeDetectorRef,
     private categoryService: CategoryService,
     private router: Router
@@ -31,22 +32,25 @@ export class AppComponent implements OnInit {
   }
 
   private init(): void {
-    this.categoryService.getCategory().subscribe(
-      category => {
+    combineLatest(
+      this.categoryService.getCategory(),
+      this.categoryService.getSubCategory()
+    ).subscribe(
+      ([category, subcategory]) => {
         if (category !== this.categoryPinyin) {
           this.categoryPinyin = category;
           if (this.categories.length) {
             this.currentCategory = this.categories.find(item => item.pinyin === this.categoryPinyin);
-          } else {
-            this.getCategories();
           }
         }
+        this.subcategory = subcategory;
       }
     )
+    this.getCategories();
   }
 
   private getCategories(): void {
-    this.albymService.categories().subscribe(value => {
+    this.albumService.categories().subscribe(value => {
       this.categories = value;
       this.currentCategory = this.categories.find(item => item.pinyin === this.categoryPinyin);
       this.cdr.markForCheck();
@@ -55,8 +59,8 @@ export class AppComponent implements OnInit {
 
   changeCategory(item: Category) {
     this.currentCategory = this.categories.find(res => res.pinyin === item.pinyin);
-    this.categoryService.setCategory(item.pinyin);
-    this.router.navigateByUrl(`/albums/${item.pinyin}`);
+    this.categoryService.setCategory(this.currentCategory?.pinyin!);
+    this.router.navigateByUrl(`/albums/${this.currentCategory?.pinyin!}`);
     this.cdr.markForCheck();
   }
 }

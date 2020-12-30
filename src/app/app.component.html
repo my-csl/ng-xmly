@@ -18,9 +18,9 @@
               </div>
             </div>
           </app-breadcrumb-item>
-          <!--<ng-container *ngFor="let item of subcategory">
-            <app-breadcrumb-item *ngIf="item">{{ item }}</app-breadcrumb-item>
-          </ng-container>-->
+          <ng-container *ngIf="subcategory.length">
+            <app-breadcrumb-item *ngFor="let item of subcategory">{{ item }}</app-breadcrumb-item>
+          </ng-container>
         </app-breadcrumb>
       </div>
       <router-outlet></router-outlet>

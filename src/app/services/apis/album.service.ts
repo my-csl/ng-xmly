@@ -4,6 +4,8 @@ import {Observable} from 'rxjs';
 import {Album, AlbumInfo, Anchor, Base, Category, MetaData, SubCategory, TracksInfo} from './types';
 import {environment} from '../../../environments/environment';
 import {map} from 'rxjs/operators';
+// @ts-ignore
+import {stringify} from 'querystring';
 
 export interface CategoryInfo {
   category: Category;
@@ -71,6 +73,17 @@ export class AlbumService {
       .pipe(
         // @ts-ignore
         map((res: Base<CategoryInfo>) => res.data)
+      );
+  }
+
+  // 专辑列表
+  getAlbums(args: AlbumArgs): Observable<AlbumsInfo> {
+    const params = new HttpParams({fromString: stringify(args)})
+    return this.http
+      .get(`${environment.baseUrl}${this.prefix}albums`, {params})
+      .pipe(
+        // @ts-ignore
+        map((res: Base<AlbumsInfo>) => res.data)
       );
   }
 

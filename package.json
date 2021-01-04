@@ -21,7 +21,7 @@
     "@angular/router": "~11.0.5",
     "@types/qs": "^6.9.5",
     "normalize.css": "^8.0.1",
-    "qs": "^6.9.4",
+    "querystring": "^0.2.0",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"

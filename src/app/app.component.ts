@@ -45,20 +45,20 @@ export class AppComponent implements OnInit {
         }
         this.subcategory = subcategory;
       }
-    )
+    );
     this.getCategories();
   }
 
   private getCategories(): void {
-    this.albumService.categories().subscribe(value => {
-      this.categories = value;
+    this.albumService.categories().subscribe(categories => {
+      this.categories = categories;
       this.currentCategory = this.categories.find(item => item.pinyin === this.categoryPinyin);
       this.cdr.markForCheck();
     });
   }
 
   changeCategory(item: Category) {
-    this.currentCategory = this.categories.find(res => res.pinyin === item.pinyin);
+    this.currentCategory = this.categories.find(category => category.pinyin === item.pinyin);
     // this.categoryService.setCategory(this.currentCategory?.pinyin!);
     this.router.navigateByUrl(`/albums/${this.currentCategory?.pinyin!}`);
     this.cdr.markForCheck();

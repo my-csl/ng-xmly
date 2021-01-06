@@ -29,12 +29,13 @@ export class AlbumsComponent implements OnInit {
     meta: '',
     sort: 0,
     page: 1,
-    perPage: 30
+    perPage: 35
   };
   categoryInfo: CategoryInfo | undefined;
   checkedMetas: CheckedMeta[] = [];
   albumsInfo: AlbumsInfo | undefined;
   sorts = ['综合排序', '最近更新', '播放最多'];
+  total = 0;
 
   constructor(
     private albumService: AlbumService,
@@ -55,12 +56,13 @@ export class AlbumsComponent implements OnInit {
         let needSetStatus = false;
         if (pinyin !== category) {
           this.categoryService.setCategory(pinyin!);
+          this.searchParams.page = 1;
           this.clearSubCategory();
           this.unCheckMate('clear');
         } else {
           const subCategory = this.windowService.getStorage(storageKeys.subcategoryCode);
           const metas = this.windowService.getStorage(storageKeys.metas);
-          console.log('subCategory',subCategory);
+          const pageNum = this.windowService.getStorage(storageKeys.pageNum);
           if (subCategory) {
             needSetStatus = true;
             this.searchParams.subcategory = subCategory;
@@ -68,6 +70,9 @@ export class AlbumsComponent implements OnInit {
           if (metas) {
             needSetStatus = true;
             this.searchParams.meta = metas;
+          }
+          if (pageNum) {
+            this.searchParams.page = +pageNum;
           }
         }
         this.updatePageDatas(needSetStatus);
@@ -82,6 +87,7 @@ export class AlbumsComponent implements OnInit {
     ).subscribe(
       ([albumsInfo, categoryInfo]) => {
         this.albumsInfo = albumsInfo;
+        this.total = albumsInfo.total;
         this.categoryInfo = categoryInfo;
         if (needSetStatus) {
           this.initStatus(categoryInfo);
@@ -94,6 +100,8 @@ export class AlbumsComponent implements OnInit {
   changeSubCategory(item?: SubCategory) {
     if (item) {
       if (this.searchParams.subcategory !== item?.code) {
+        this.searchParams.page = 1;
+        this.windowService.removeStorage(storageKeys.pageNum);
         this.categoryService.setSubCategory([item?.displayValue!]);
         this.searchParams.subcategory = item?.code!;
         this.windowService.setStorage(storageKeys.subcategoryCode, item?.code!);
@@ -162,6 +170,7 @@ export class AlbumsComponent implements OnInit {
     this.albumService.getAlbums(this.searchParams).subscribe(
       albumsInfo => {
         this.albumsInfo = albumsInfo;
+        this.total = albumsInfo.total;
         this.cdr.markForCheck();
       }
     );
@@ -169,6 +178,7 @@ export class AlbumsComponent implements OnInit {
 
   private clearSubCategory(): void {
     this.searchParams.subcategory = '';
+    this.windowService.removeStorage(storageKeys.pageNum);
     this.categoryService.setSubCategory([]);
     this.windowService.removeStorage(storageKeys.subcategoryCode);
   }
@@ -192,6 +202,14 @@ export class AlbumsComponent implements OnInit {
           metaName: displayName
         });
       });
+    }
+  }
+
+  changePage(page: number) {
+    if (this.searchParams.page !== page) {
+      this.searchParams.page = page;
+      this.windowService.setStorage(storageKeys.pageNum, page.toString());
+      this.getAlbums();
     }
   }
 }

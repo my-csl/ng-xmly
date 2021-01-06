@@ -24,9 +24,9 @@
     <div class="row checked-conditions" *ngIf="checkedMetas.length">
       <b class="title">已筛选</b>
       <ul class="tabs">
-        <li class="tag" (click)="unCheckMate(item)" *ngFor="let item of checkedMetas">
-          <span class="label-title">{{item.metaRowName}}</span> |
-          <span>{{item.metaName}}</span>
+        <li class="tag checked" *ngFor="let item of checkedMetas">
+          <span class="label-title">{{item.metaRowName}}</span>
+          <app-tag [xmClosable]="true" (closed)="unCheckMate(item)">{{item.metaName}}</app-tag>
         </li>
       </ul>
       <a class="clear" (click)="unCheckMate('clear')">清除全部</a>
@@ -54,18 +54,29 @@
           <img class="thumbnail" [src]="album.coverPath + '!strip=1&quality=7&magick=webp&op_type=3&columns=290&rows=290'" [alt]="[album.title]">
           <img class="icon-play" src="assets/images/icon-play-cover.png" />
           <p class="listen-count">
-            <i class="icon iconfont icon-headset"></i>
-            <span>{{ album.playCount }}万</span>
+            <i appIcon="headset" class="icon"></i>
+            <span>{{ album.playCount | numberFormat: {precision: 2} }}万</span>
           </p>
         </div>
         <div class="abstract">
           <p class="txt title ellipsis">
-            <span *ngIf="album.isFinished === 2" class="tag">完本</span>
+<!--            <span *ngIf="album.isFinished === 2" class="tag">完本</span>-->
+            <app-tag *ngIf="album.isFinished === 2" class="tag" [xmColor]="'green'">完本</app-tag>
             <span>{{ album.title }}</span>
           </p>
           <p class="txt author"><span>{{ album.anchorName }}</span></p>
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="page-wrap">
+    <app-pagination
+      [pageNum]="searchParams.page"
+      [pageSize]="searchParams.perPage"
+      [total]="total"
+      (change)="changePage($event)"
+      class="page">
+    </app-pagination>
   </div>
 </div>

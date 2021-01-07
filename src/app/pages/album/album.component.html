@@ -1,0 +1,118 @@
+<div class="album-info">
+  <div class="main" *ngIf="albumInfo">
+    <div class="info">
+      <div class="thumbnail">
+        <img [src]="albumInfo.cover" [alt]="albumInfo.albumTitle" class="cover">
+        <div class="back-cover"></div>
+      </div>
+      <div class="contents">
+        <h1>
+          <app-tag xmColor="#5fa8fc" class="tag" *ngIf="albumInfo.isFinished === 1">连载</app-tag>
+          <app-tag xmColor="green" class="tag" *ngIf="albumInfo.isFinished === 2">完本</app-tag>
+          <span>{{albumInfo.albumTitle}}</span>
+        </h1>
+        <div class="record">
+          <div class="rate">
+            <div class="star-wrap">
+              star|star
+            </div>
+            <span class="score">{{score}}分</span>
+          </div>
+          <div class="play-count">
+            <i appIcon="headset" class="icon"></i>
+            <span>{{albumInfo.playCount | numberFormat}}</span>
+          </div>
+        </div>
+        <div class="metas">
+          <app-tag class="meta" *ngFor="let item of albumInfo.metas">{{item.metaDisplayName}}</app-tag>
+        </div>
+        <div class="actions">
+          <button appXmBtn [xmCircle]="true" class="btn">
+            <i appIcon="play1" class="icon"></i>
+            播放全部
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="intro">
+      <article [innerHTML]="albumInfo.detailRichIntro | safeContent">
+      </article>
+      <div class="more-arrow" (click)="showMore()">
+        <div class="blur" [hidden]="moreState.full"></div>
+        <span>{{moreState.label}}</span>
+        <i [appIcon]="moreState.icon" class="icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <!--相关专辑-->
+  <div class="side" *ngIf="anchor">
+    <ng-container >
+      <div class="card">
+        <div class="card-head">
+          <h3>专辑主播</h3>
+        </div>
+        <div class="card-body">
+          <div class="anchor-info">
+            <div class="anchor-head">
+              <div class="photo">
+                <img [src]="anchor.anchorCover" [alt]="anchor.anchorName"/>
+              </div>
+              <span class="name">{{ anchor.anchorName }}</span>
+            </div>
+            <ul class="anchor-stats">
+              <li>曲目：{{ anchor.anchorTracksCount }}</li>
+              <li>专辑：{{ anchor.anchorAlbumsCount }}</li>
+              <li>粉丝：{{ anchor.anchorFansCount | numberFormat }}</li>
+            </ul>
+            <p class="anchor-intro">
+              简介：
+              {{ anchor.personalIntroduction }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <h3>TA的专辑</h3>
+        </div>
+        <div class="card-body">
+          <div class="albums">
+            <div class="album-item" *ngFor="let item of anchor.anchorAlbumList" [routerLink]="['/album', item.albumId]">
+              <div class="thumbnail">
+                <img [src]="item.cover" [alt]="item.albumTitle">
+              </div>
+              <div class="content">
+                <div class="title">{{ item.albumTitle }}</div>
+                <span class="count">
+               <i appIcon="headset" class="icon"></i>{{ item.playCount | numberFormat }}
+             </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <div class="card">
+      <div class="card-head">
+        <h3>相关推荐</h3>
+      </div>
+      <div class="card-body">
+        <div class="albums">
+          <div class="album-item" *ngFor="let item of relateAlbums" [routerLink]="'/album/' + item.id">
+            <div class="thumbnail">
+              <img [src]="'//imagev2.xmcdn.com/' + item.coverPath" [alt]="item.title">
+            </div>
+            <div class="content">
+              <div class="title">{{ item.title }}</div>
+              <span class="count">
+               <i appIcon="headset" class="icon"></i>{{ item.playCount | numberFormat }}
+             </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

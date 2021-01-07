@@ -5,6 +5,7 @@ import {HeaderComponent} from './layouts/header/header.component';
 import {BreadcrumbModule} from './shard/components/breadcrumb/breadcrumb.module';
 import {HttpClientModule} from '@angular/common/http';
 import {PagesModule} from './pages/pages.module';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 
 @NgModule({
@@ -12,6 +13,7 @@ import {PagesModule} from './pages/pages.module';
   exports: [HeaderComponent, BreadcrumbModule, BrowserModule, AppRoutingModule],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     HttpClientModule,
     BreadcrumbModule,
     PagesModule,

@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
 import {NumberFormatPipe} from './number-format.pipe';
+import { SafeContentPipe } from './safe-content.pipe';
 
 @NgModule({
   exports: [
-    NumberFormatPipe
+    NumberFormatPipe,
+    SafeContentPipe
   ],
-  declarations: [NumberFormatPipe]
+  declarations: [NumberFormatPipe, SafeContentPipe]
 })
 export class PipesModule { }

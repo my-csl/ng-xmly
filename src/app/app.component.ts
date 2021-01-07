@@ -58,9 +58,9 @@ export class AppComponent implements OnInit {
   }
 
   changeCategory(item: Category) {
-    this.currentCategory = this.categories.find(category => category.pinyin === item.pinyin);
+    // this.currentCategory = this.categories.find(category => category.pinyin === item.pinyin);
     // this.categoryService.setCategory(this.currentCategory?.pinyin!);
-    this.router.navigateByUrl(`/albums/${this.currentCategory?.pinyin!}`);
+    this.router.navigateByUrl(`/albums/${item.pinyin}`);
     this.cdr.markForCheck();
   }
 }

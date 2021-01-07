@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
 import {round} from 'lodash';
 
 enum Exponent {
@@ -6,25 +6,16 @@ enum Exponent {
   '亿' = 100000000
 }
 
-const defaultConfig:FormatNumberConfig = {
-  unit: '万',
-  precision: 2
-}
-
-interface FormatNumberConfig {
-  unit?: string,
-  precision?: number;
-}
-
 @Pipe({
   name: 'numberFormat'
 })
 export class NumberFormatPipe implements PipeTransform {
-
-  transform(value: number, config: FormatNumberConfig = defaultConfig): number {
-    // @ts-ignore
-    const unit = Exponent[config.unit || defaultConfig.unit] ;
-    return round(value / unit, config.precision || defaultConfig.precision);
+  transform(value: number, precision = 1): string {
+    if (!value || value < Exponent['万']) {
+      return value.toString();
+    } else if (value > Exponent['亿']) {
+      return round(value / Exponent['亿'], precision) + '亿';
+    }
+    return round(value / Exponent['万'], precision) + '万';
   }
-
 }

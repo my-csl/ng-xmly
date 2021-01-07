@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@an
 import {AlbumArgs, AlbumService, AlbumsInfo, CategoryInfo} from '../../services/apis/album.service';
 import {MetaData, MetaValue, SubCategory} from '../../services/apis/types';
 import {CategoryService} from '../../services/business/category.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {withLatestFrom} from 'rxjs/operators';
 import {forkJoin} from 'rxjs';
 import {WindowService} from '../../services/tools/window.service';
@@ -62,18 +62,20 @@ export class AlbumsComponent implements OnInit {
         } else {
           const subCategory = this.windowService.getStorage(storageKeys.subcategoryCode);
           const metas = this.windowService.getStorage(storageKeys.metas);
-          const pageNum = this.windowService.getStorage(storageKeys.pageNum);
+          // const pageNum = this.windowService.getStorage(storageKeys.pageNum);
           if (subCategory) {
             needSetStatus = true;
             this.searchParams.subcategory = subCategory;
+          } else {
+            this.clearSubCategory();
           }
           if (metas) {
             needSetStatus = true;
             this.searchParams.meta = metas;
           }
-          if (pageNum) {
-            this.searchParams.page = +pageNum;
-          }
+          // if (pageNum) {
+          //   this.searchParams.page = +pageNum;
+          // }
         }
         this.updatePageDatas(needSetStatus);
       }
@@ -101,7 +103,7 @@ export class AlbumsComponent implements OnInit {
     if (item) {
       if (this.searchParams.subcategory !== item?.code) {
         this.searchParams.page = 1;
-        this.windowService.removeStorage(storageKeys.pageNum);
+        // this.windowService.removeStorage(storageKeys.pageNum);
         this.categoryService.setSubCategory([item?.displayValue!]);
         this.searchParams.subcategory = item?.code!;
         this.windowService.setStorage(storageKeys.subcategoryCode, item?.code!);
@@ -208,7 +210,7 @@ export class AlbumsComponent implements OnInit {
   changePage(page: number) {
     if (this.searchParams.page !== page) {
       this.searchParams.page = page;
-      this.windowService.setStorage(storageKeys.pageNum, page.toString());
+      // this.windowService.setStorage(storageKeys.pageNum, page.toString());
       this.getAlbums();
     }
   }

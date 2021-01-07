@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {Observable} from 'rxjs';
-import {Album, AlbumInfo, Anchor, Base, Category, MetaData, SubCategory, TracksInfo} from './types';
+import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http';
+import {Observable, throwError} from 'rxjs';
+import {Album, AlbumInfo, Anchor, Base, Category, MetaData, RelateAlbum, SubCategory, TracksInfo} from './types';
 import {environment} from '../../../environments/environment';
-import {map} from 'rxjs/operators';
+import {catchError, map} from 'rxjs/operators';
 // @ts-ignore
 import {stringify} from 'querystring';
 
@@ -78,7 +78,7 @@ export class AlbumService {
 
   // 专辑列表
   getAlbums(args: AlbumArgs): Observable<AlbumsInfo> {
-    const params = new HttpParams({fromString: stringify(args)})
+    const params = new HttpParams({fromString: stringify(args)});
     return this.http
       .get(`${environment.baseUrl}${this.prefix}albums`, {params})
       .pipe(
@@ -87,4 +87,35 @@ export class AlbumService {
       );
   }
 
+  // 专辑详情
+  getAlbum(albumId: string): Observable<AlbumRes> {
+    const params = new HttpParams().set('albumId', albumId);
+    return this.http
+      .get(`${environment.baseUrl}${this.prefix}album`, {params})
+      .pipe(
+        // @ts-ignore
+        map((res: Base<AlbumRes>) => res.data)
+      );
+  }
+
+  // 专辑评分
+  getAlbumScore(albumId: string): Observable<number> {
+    return this.http
+      .get(`${environment.baseUrl}${this.prefix}album-score/${albumId}`)
+      .pipe(
+        // @ts-ignore
+        map((res: Base<{ albumScore: number }>) => res.data.albumScore || 0)
+      );
+  }
+
+  // 相关专辑列表
+  getRelateAlbums(id: string): Observable<RelateAlbum[]> {
+    const params = new HttpParams().set('id', id);
+    return this.http
+      .get(`${environment.baseUrl}${this.prefix}album-relate`, {params})
+      .pipe(
+        // @ts-ignore
+        map((res: Base<{ hotWordAlbums: RelateAlbum[] }>) => res.data.hotWordAlbums)
+      );
+  }
 }

@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
-import {HttpClient, HttpErrorResponse, HttpParams} from '@angular/common/http';
-import {Observable, throwError} from 'rxjs';
+import {HttpClient, HttpParams} from '@angular/common/http';
+import {Observable} from 'rxjs';
 import {Album, AlbumInfo, Anchor, Base, Category, MetaData, RelateAlbum, SubCategory, TracksInfo} from './types';
 import {environment} from '../../../environments/environment';
-import {catchError, map} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 // @ts-ignore
 import {stringify} from 'querystring';
 

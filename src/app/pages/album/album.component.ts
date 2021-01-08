@@ -1,15 +1,17 @@
-import {Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, Renderer2} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {AlbumService, AlbumTrackArgs} from '../../services/apis/album.service';
 import {forkJoin} from 'rxjs';
 import {AlbumInfo, Anchor, RelateAlbum, Track} from '../../services/apis/types';
 import {CategoryService} from '../../services/business/category.service';
+import {IconType} from '../../shard/directives/icon/type';
+import {FormBuilder} from '@angular/forms';
 
 
 interface moreStateType {
   full: boolean,
   label: string,
-  icon: string
+  icon: IconType
 }
 
 @Component({
@@ -20,9 +22,9 @@ interface moreStateType {
 })
 export class AlbumComponent implements OnInit {
 
-  albumInfo: AlbumInfo | undefined;
-  score: number | undefined;
-  anchor: Anchor | undefined;
+  albumInfo: AlbumInfo;
+  score: number;
+  anchor: Anchor;
   relateAlbums: RelateAlbum[] = [];
   tracks: Track[] = [];
   total = 0;
@@ -37,17 +39,30 @@ export class AlbumComponent implements OnInit {
     full: false,
     label: '显示全部',
     icon: 'arrow-down-line'
-  }
+  };
+  articleHeight: number;
+
+  size = 16;
+  form = this.fb.group({
+    name: [''],
+    size: [{value: 20, disabled: false}]
+  });
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private albumService: AlbumService,
     private categoryService: CategoryService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private fb: FormBuilder
   ) {
   }
 
   ngOnInit(): void {
+    this.initPageData();
+    // this.trackParams.albumId = this.activatedRoute.snapshot.paramMap.get('this.trackParams.albumId')!;
+  }
+
+  private initPageData() {
     this.activatedRoute.paramMap.subscribe(
       albumId => {
         this.trackParams.albumId = albumId.get('albumId')!;
@@ -63,11 +78,23 @@ export class AlbumComponent implements OnInit {
           this.albumInfo = {...albumInfo.mainInfo, albumId: albumInfo.albumId};
           this.anchor = albumInfo.anchorInfo;
           this.categoryService.setSubCategory([albumInfo.mainInfo.albumTitle]);
+          this.categoryService.getCategory().subscribe(
+            category => {
+              const pinyin = this.albumInfo.crumbs.categoryPinyin;
+              if (category !== pinyin) {
+                this.categoryService.setCategory(pinyin);
+              }
+            }
+          );
+          this.moreState = {
+            full: false,
+            label: '显示全部',
+            icon: 'arrow-down-line'
+          };
           this.cdr.markForCheck();
         });
       }
     );
-    // this.trackParams.albumId = this.activatedRoute.snapshot.paramMap.get('this.trackParams.albumId')!;
   }
 
   showMore() {
@@ -79,5 +106,13 @@ export class AlbumComponent implements OnInit {
       this.moreState.label = '显示全部';
       this.moreState.icon = 'arrow-down-line';
     }
+  }
+
+  submit() {
+    console.log('form', this.form.value);
+  }
+
+  sizeChange(size: number) {
+    console.log('sizeChange', size);
   }
 }

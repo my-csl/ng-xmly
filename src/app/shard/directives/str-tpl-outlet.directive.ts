@@ -5,7 +5,7 @@ import {Directive, Input, OnChanges, SimpleChanges, TemplateRef, ViewContainerRe
 })
 export class StrTplOutletDirective implements OnChanges {
 
-  @Input() appStrTplOutlet: TemplateRef<any> | string | undefined;
+  @Input() appStrTplOutlet: TemplateRef<any> | string;
   @Input() appStrTplOutletContext: any;
 
   constructor(private viewContainerRef: ViewContainerRef, private templateRef: TemplateRef<any>) {

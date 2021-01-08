@@ -1,21 +1,26 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 
-import { AlbumRoutingModule } from './album-routing.module';
-import { AlbumComponent } from './album.component';
+import {AlbumRoutingModule} from './album-routing.module';
+import {AlbumComponent} from './album.component';
 import {TagModule} from '../../shard/components/tag/tag.module';
 import {DirectivesModule} from '../../shard/directives/directives.module';
 import {PipesModule} from '../../shard/pipes/pipes.module';
+import {SizesComponent} from './sizes/sizes.component';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 
 @NgModule({
-  declarations: [AlbumComponent],
+  declarations: [AlbumComponent, SizesComponent],
   imports: [
     CommonModule,
     AlbumRoutingModule,
     TagModule,
     DirectivesModule,
-    PipesModule
+    PipesModule,
+    ReactiveFormsModule,
+    FormsModule
   ]
 })
-export class AlbumModule { }
+export class AlbumModule {
+}

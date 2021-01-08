@@ -1,4 +1,19 @@
 <div class="album-info">
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="form-test">
+    <label>
+      name:
+      <input type="text" formControlName="name">
+    </label>
+    <app-sizes formControlName="size" (ngModelChange)="sizeChange($event)"></app-sizes>
+    <button>submit</button>
+  </form>
+  <hr>
+  <div>
+    size:{{size}}
+    <app-sizes [(ngModel)]="size" [disabled]="false" (ngModelChange)="sizeChange($event)"></app-sizes>
+  </div>
+
   <div class="main" *ngIf="albumInfo">
     <div class="info">
       <div class="thumbnail">
@@ -35,9 +50,9 @@
       </div>
     </div>
     <div class="intro">
-      <article [innerHTML]="albumInfo.detailRichIntro | safeContent">
+      <article appToggleMore="360" (initTrueHeight)="articleHeight = $event" [isFull]="moreState.full" [content]="albumInfo.detailRichIntro" [innerHTML]="albumInfo.detailRichIntro | safeContent">
       </article>
-      <div class="more-arrow" (click)="showMore()">
+      <div class="more-arrow" (click)="showMore()" *ngIf="articleHeight > 360">
         <div class="blur" [hidden]="moreState.full"></div>
         <span>{{moreState.label}}</span>
         <i [appIcon]="moreState.icon" class="icon"></i>
@@ -61,8 +76,8 @@
               <span class="name">{{ anchor.anchorName }}</span>
             </div>
             <ul class="anchor-stats">
-              <li>曲目：{{ anchor.anchorTracksCount }}</li>
               <li>专辑：{{ anchor.anchorAlbumsCount }}</li>
+              <li>曲目：{{ anchor.anchorTracksCount }}</li>
               <li>粉丝：{{ anchor.anchorFansCount | numberFormat }}</li>
             </ul>
             <p class="anchor-intro">

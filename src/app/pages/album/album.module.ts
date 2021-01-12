@@ -8,6 +8,9 @@ import {DirectivesModule} from '../../shard/directives/directives.module';
 import {PipesModule} from '../../shard/pipes/pipes.module';
 import {SizesComponent} from './sizes/sizes.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {CheckboxModule} from '../../shard/components/checkbox/checkbox.module';
+import {PaginationModule} from '../../shard/components/pagination/pagination.module';
+import {RateModule} from '../../shard/components/rate/rate.module';
 
 
 @NgModule({
@@ -19,7 +22,10 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     DirectivesModule,
     PipesModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    CheckboxModule,
+    PaginationModule,
+    RateModule
   ]
 })
 export class AlbumModule {

@@ -18,7 +18,7 @@
     </li>
   </ul>
   <div class="xm-page-navigate">
-    <input #page (keyup.enter)="onClickBtn(+page.value)" type="number" class="xm-input" [min]="1" [max]="lastNum"/>
+    <input #page (keyup.enter)="onClickBtn(+page.value);$event.stopPropagation()" type="number" class="xm-input" [min]="1" [max]="lastNum"/>
     <button appXmBtn (click)="onClickBtn(+page.value)">跳转</button>
   </div>
 </div>

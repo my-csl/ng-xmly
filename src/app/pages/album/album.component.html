@@ -1,68 +1,133 @@
 <div class="album-info">
-
-  <form [formGroup]="form" (ngSubmit)="submit()" class="form-test">
-    <label>
-      name:
-      <input type="text" formControlName="name">
-    </label>
-    <app-sizes formControlName="size" (ngModelChange)="sizeChange($event)"></app-sizes>
-    <button>submit</button>
-  </form>
-  <hr>
-  <div>
-    size:{{size}}
-    <app-sizes [(ngModel)]="size" [disabled]="false" (ngModelChange)="sizeChange($event)"></app-sizes>
-  </div>
-
-  <div class="main" *ngIf="albumInfo">
-    <div class="info">
-      <div class="thumbnail">
-        <img [src]="albumInfo.cover" [alt]="albumInfo.albumTitle" class="cover">
-        <div class="back-cover"></div>
-      </div>
-      <div class="contents">
-        <h1>
-          <app-tag xmColor="#5fa8fc" class="tag" *ngIf="albumInfo.isFinished === 1">连载</app-tag>
-          <app-tag xmColor="green" class="tag" *ngIf="albumInfo.isFinished === 2">完本</app-tag>
-          <span>{{albumInfo.albumTitle}}</span>
-        </h1>
-        <div class="record">
-          <div class="rate">
-            <div class="star-wrap">
-              star|star
+  <div class="main">
+    <ng-container *ngIf="albumInfo;else skeleton">
+      <div class="info">
+        <div class="thumbnail">
+          <img [src]="albumInfo.cover" [alt]="albumInfo.albumTitle" class="cover">
+          <div class="back-cover"></div>
+        </div>
+        <div class="contents">
+          <h1>
+            <app-tag xmColor="#5fa8fc" class="tag" *ngIf="albumInfo.isFinished === 1">连载</app-tag>
+            <app-tag xmColor="green" class="tag" *ngIf="albumInfo.isFinished === 2">完本</app-tag>
+            <span>{{albumInfo.albumTitle}}</span>
+          </h1>
+          <div class="record">
+            <div class="rate">
+              <div class="star-wrap">
+                <app-rate></app-rate>
+              </div>
+              <span class="score">{{score}}分</span>
             </div>
-            <span class="score">{{score}}分</span>
+            <div class="play-count">
+              <i appIcon="headset" class="icon"></i>
+              <span>{{albumInfo.playCount | numberFormat}}</span>
+            </div>
           </div>
-          <div class="play-count">
-            <i appIcon="headset" class="icon"></i>
-            <span>{{albumInfo.playCount | numberFormat}}</span>
+          <div class="metas">
+            <app-tag class="meta" *ngFor="let item of albumInfo.metas">{{item.metaDisplayName}}</app-tag>
           </div>
-        </div>
-        <div class="metas">
-          <app-tag class="meta" *ngFor="let item of albumInfo.metas">{{item.metaDisplayName}}</app-tag>
-        </div>
-        <div class="actions">
-          <button appXmBtn [xmCircle]="true" class="btn">
-            <i appIcon="play1" class="icon"></i>
-            播放全部
-          </button>
+          <div class="actions">
+            <button appXmBtn [xmCircle]="true" class="btn">
+              <i appIcon="play1" class="icon"></i>
+              播放全部
+            </button>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="intro">
-      <article appToggleMore="360" (initTrueHeight)="articleHeight = $event" [isFull]="moreState.full" [content]="albumInfo.detailRichIntro" [innerHTML]="albumInfo.detailRichIntro | safeContent">
-      </article>
-      <div class="more-arrow" (click)="showMore()" *ngIf="articleHeight > 360">
-        <div class="blur" [hidden]="moreState.full"></div>
-        <span>{{moreState.label}}</span>
-        <i [appIcon]="moreState.icon" class="icon"></i>
+      <div class="intro">
+        <article appToggleMore="360" (initTrueHeight)="articleHeight = $event" [isFull]="moreState.full"
+                 [content]="albumInfo.detailRichIntro" [innerHTML]="albumInfo.detailRichIntro | safeContent">
+        </article>
+        <div class="more-arrow" (click)="showMore()" *ngIf="articleHeight > 360">
+          <div class="blur" [hidden]="moreState.full"></div>
+          <span>{{moreState.label}}</span>
+          <i [appIcon]="moreState.icon" class="icon"></i>
+        </div>
       </div>
-    </div>
+      <div class="playlist">
+        <table>
+          <thead>
+          <tr>
+            <th><label app-checkbox [ngModel]="isCheckedAll()" (ngModelChange)="checkAllChange($event)"></label></th>
+            <th class="item-name">曲目</th>
+            <th>播放量</th>
+            <th>创建时间</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let track of tracks">
+            <td class="item-checkbox"><label app-checkbox [ngModel]="isChecked(track.trackId)"
+                                             (ngModelChange)="checkChange($event, track)"></label></td>
+            <td class="item-name">
+              <span class="prefix number">{{ track.index }}</span>
+              <i appIcon="'play1'" class="prefix icon icon-play"></i>
+              <i appIcon="'pause'" class="prefix icon icon-pause"></i>
+              <div class="prefix icon icon-playing"><i></i><i></i><i></i><i></i></div>
+              <span>{{ track.title }}</span>
+            </td>
+            <td>
+              <i appIcon="'headset'" class="icon"></i>
+              <span>{{ track.playCount | numberFormat }}万</span>
+            </td>
+            <td>{{ track.createDateFormat }}</td>
+          </tr>
+          <tr class="last"></tr>
+          </tbody>
+          <tfoot>
+          <tr>
+            <th><label app-checkbox [ngModel]="isCheckedAll()" (ngModelChange)="checkAllChange($event)"></label></th>
+            <th class="item-name">
+              <button appXmBtn [xmCircle]="true">播放选中歌曲</button>
+              <button class="btn-add" appXmBtn [xmCircle]="true">添加到播放列表</button>
+            </th>
+          </tr>
+          </tfoot>
+        </table>
+        <div class="page-wrap">
+          <app-pagination
+            class="page"
+            [total]="total"
+            [pageNum]="trackParams.pageNum"
+            [pageSize]="trackParams.pageSize"
+            (change)="changePage($event)">
+          </app-pagination>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #skeleton>
+      <svg role="img" aria-labelledby="Loading interface..." viewBox="0 0 400 130" preserveAspectRatio="xMidYMid meet">
+        <title>Loading interface...</title>
+        <rect x="0" y="0" width="400" height="130" clip-path="url(#k8vk4h3v2qo)"
+              style="fill: url(&quot;#j1umtr4lgr&quot;);"></rect>
+        <defs>
+          <clipPath id="k8vk4h3v2qo">
+            <rect x="0" y="0" rx="3" ry="3" width="250" height="10"></rect>
+            <rect x="20" y="20" rx="3" ry="3" width="220" height="10"></rect>
+            <rect x="20" y="40" rx="3" ry="3" width="170" height="10"></rect>
+            <rect x="0" y="60" rx="3" ry="3" width="250" height="10"></rect>
+            <rect x="20" y="80" rx="3" ry="3" width="200" height="10"></rect>
+            <rect x="20" y="100" rx="3" ry="3" width="80" height="10"></rect>
+          </clipPath>
+          <linearGradient id="j1umtr4lgr">
+            <stop offset="0.866418" stop-color="#f0f0f0" stop-opacity="1">
+              <animate attributeName="offset" values="-3; 1" dur="2s" repeatCount="indefinite"></animate>
+            </stop>
+            <stop offset="1.86642" stop-color="#e0e0e0" stop-opacity="1">
+              <animate attributeName="offset" values="-2; 2" dur="2s" repeatCount="indefinite"></animate>
+            </stop>
+            <stop offset="2.86642" stop-color="#f0f0f0" stop-opacity="1">
+              <animate attributeName="offset" values="-1; 3" dur="2s" repeatCount="indefinite"></animate>
+            </stop>
+          </linearGradient>
+        </defs>
+      </svg>
+    </ng-template>
   </div>
 
   <!--相关专辑-->
   <div class="side" *ngIf="anchor">
-    <ng-container >
+    <ng-container>
       <div class="card">
         <div class="card-head">
           <h3>专辑主播</h3>

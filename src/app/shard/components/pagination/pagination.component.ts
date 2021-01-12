@@ -1,4 +1,4 @@
-import {Component, Input, OnChanges, OnInit, Output, SimpleChanges,EventEmitter} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, Output, SimpleChanges, EventEmitter} from '@angular/core';
 import {clamp} from 'lodash';
 
 type PageType = 'page' | 'prev' | 'next' | 'prev5' | 'next5';
@@ -61,7 +61,7 @@ export class PaginationComponent implements OnInit, OnChanges {
       let newPageNum = this.pageNum;
       if (item.type === 'page') {
         newPageNum = item.num!;
-      }else {
+      } else {
         const diff = {
           next: 1,
           prev: -1,
@@ -75,12 +75,17 @@ export class PaginationComponent implements OnInit, OnChanges {
   }
 
   onClickBtn(value: number) {
-    console.log('value',value);
+    console.log('value', value);
     if (value > 0) {
       this.changePage({
         type: 'page',
         num: value
-      })
+      });
+    } else {
+      this.changePage({
+        type: 'page',
+        num: 1
+      });
     }
   }
 }

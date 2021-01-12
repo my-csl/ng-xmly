@@ -3,3 +3,18 @@
   <button [disabled]="disable" appXmBtn type="button" class="btn btn-primary" (click)="inc()">-</button>
   <label [style.font-size.px]="size">fontSize: {{size}}px</label>
 </div>
+
+<!--
+  <form [formGroup]="form" (ngSubmit)="submit()" class="form-test">
+    <label>
+      name:
+      <input type="text" formControlName="name">
+    </label>
+    <app-sizes formControlName="size" (ngModelChange)="sizeChange($event)"></app-sizes>
+    <button>submit</button>
+  </form>
+  <hr>
+  <div>
+    size:{{size}}
+    <app-sizes [(ngModel)]="size" [disabled]="false" (ngModelChange)="sizeChange($event)"></app-sizes>
+  </div>-->

@@ -44,7 +44,6 @@ export class ToggleMoreDirective implements OnInit, OnChanges {
     this.rd2.appendChild(dom.parentNode, cloneNode);
     const rect = cloneNode.getBoundingClientRect();
     this.rd2.removeChild(dom.parentNode, cloneNode);
-    console.log('rect', rect);
     return rect;
   }
 }

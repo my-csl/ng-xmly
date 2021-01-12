@@ -5,7 +5,7 @@ import {forkJoin} from 'rxjs';
 import {AlbumInfo, Anchor, RelateAlbum, Track} from '../../services/apis/types';
 import {CategoryService} from '../../services/business/category.service';
 import {IconType} from '../../shard/directives/icon/type';
-import {FormBuilder} from '@angular/forms';
+import {storageKeys} from '../../configs';
 
 
 interface moreStateType {
@@ -27,10 +27,11 @@ export class AlbumComponent implements OnInit {
   anchor: Anchor;
   relateAlbums: RelateAlbum[] = [];
   tracks: Track[] = [];
+  trackSelected: Track[] = [];
   total = 0;
   trackParams: AlbumTrackArgs = {
     albumId: '',
-    sort: 1,
+    sort: 0,
     pageNum: 1,
     pageSize: 30
   };
@@ -42,24 +43,16 @@ export class AlbumComponent implements OnInit {
   };
   articleHeight: number;
 
-  size = 16;
-  form = this.fb.group({
-    name: [''],
-    size: [{value: 20, disabled: false}]
-  });
-
   constructor(
     private activatedRoute: ActivatedRoute,
     private albumService: AlbumService,
     private categoryService: CategoryService,
-    private cdr: ChangeDetectorRef,
-    private fb: FormBuilder
+    private cdr: ChangeDetectorRef
   ) {
   }
 
   ngOnInit(): void {
     this.initPageData();
-    // this.trackParams.albumId = this.activatedRoute.snapshot.paramMap.get('this.trackParams.albumId')!;
   }
 
   private initPageData() {
@@ -72,20 +65,29 @@ export class AlbumComponent implements OnInit {
           this.albumService.getRelateAlbums(this.trackParams.albumId)
         ]).subscribe(([albumInfo, score, relateAlbums]) => {
           this.score = score;
-          this.tracks = albumInfo.tracksInfo.tracks;
-          this.total = albumInfo.tracksInfo.trackTotalCount;
+      /*    this.tracks = albumInfo.tracksInfo.tracks;
+          this.total = albumInfo.tracksInfo.trackTotalCount;*/
           this.relateAlbums = relateAlbums.slice(0, 10);
           this.albumInfo = {...albumInfo.mainInfo, albumId: albumInfo.albumId};
           this.anchor = albumInfo.anchorInfo;
           this.categoryService.setSubCategory([albumInfo.mainInfo.albumTitle]);
-          this.categoryService.getCategory().subscribe(
+
+          this.updateTracks();
+
+          const pinyin = this.albumInfo.crumbs.categoryPinyin;
+          const cache = localStorage.getItem(storageKeys.categoryPinyin);
+          if (pinyin !== cache) {
+            this.categoryService.setCategory(pinyin);
+          }
+          /*this.categoryService.getCategory().subscribe(
             category => {
               const pinyin = this.albumInfo.crumbs.categoryPinyin;
               if (category !== pinyin) {
+                // get的时候又set会造成循环依赖的问题
                 this.categoryService.setCategory(pinyin);
               }
             }
-          );
+          );*/
           this.moreState = {
             full: false,
             label: '显示全部',
@@ -108,11 +110,64 @@ export class AlbumComponent implements OnInit {
     }
   }
 
-  submit() {
-    console.log('form', this.form.value);
+  changePage(pageNum: number) {
+    if (this.trackParams.pageNum !== pageNum) {
+      this.trackParams.pageNum = pageNum;
+      this.updateTracks();
+    }
   }
 
-  sizeChange(size: number) {
-    console.log('sizeChange', size);
+  private updateTracks() {
+    this.albumService.getTracks(this.trackParams).subscribe(res => {
+      this.tracks = res.tracks;
+      this.total = res.trackTotalCount;
+      this.cdr.markForCheck();
+    });
+  }
+
+  checkChange(check: boolean, track: Track) {
+    const targetIndex = this.selectIndex(track.trackId);
+    if (check) {
+      if (targetIndex === -1) {
+        this.trackSelected.push(track);
+      }
+    } else {
+      if (targetIndex > -1) {
+        this.trackSelected.splice(targetIndex, 1);
+      }
+    }
+  }
+
+  checkAllChange(check: boolean) {
+    this.tracks.forEach(item => {
+      const targetIndex = this.selectIndex(item.trackId);
+      if (check) {
+        if (targetIndex === -1) {
+          this.trackSelected.push(item);
+        }
+      } else {
+        if (targetIndex > -1) {
+          this.trackSelected.splice(targetIndex, 1);
+        }
+      }
+    });
+  }
+
+  private selectIndex(id: number) {
+    return this.trackSelected.findIndex(item => item.trackId === id);
+  }
+
+  isChecked(trackId: number): boolean {
+    const targetIndex = this.selectIndex(trackId);
+    return targetIndex > -1;
+  }
+
+  isCheckedAll() {
+    if (this.trackSelected.length >= this.tracks.length) {
+      return this.tracks.every(item => {
+        return this.selectIndex(item.trackId) > -1;
+      });
+    }
+    return false;
   }
 }

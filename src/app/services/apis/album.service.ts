@@ -118,4 +118,16 @@ export class AlbumService {
         map((res: Base<{ hotWordAlbums: RelateAlbum[] }>) => res.data.hotWordAlbums)
       );
   }
+
+  // 专辑播放列表
+  getTracks(args: AlbumTrackArgs): Observable<TracksInfo> {
+    const params = new HttpParams({fromString: stringify(args)});
+    return this.http
+      .get(`${environment.baseUrl}${this.prefix}album-tracks`, {params})
+      .pipe(
+        // @ts-ignore
+        map((res: Base<TracksInfo>) => res.data)
+      )
+  }
+
 }

@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy, Input, Output, EventEmitter, TemplateRef, ViewContainerRef} from '@angular/core';
+import {RateComponent} from '../rate.component';
 
 @Component({
   selector: 'app-rate-item',
@@ -8,9 +9,24 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 })
 export class RateItemComponent implements OnInit {
 
-  constructor() { }
+  @Input() rateItemCls = 'xm-rate-item'
+  @Input() tpl: TemplateRef<void>;
+  @Output() hoverValue = new EventEmitter<boolean>();
+  @Output() clickValue = new EventEmitter<boolean>();
+
+  constructor() {
+  }
 
   ngOnInit(): void {
   }
 
+  clickStar(isHalf: boolean) {
+    // console.log('click',isHalf);
+    this.clickValue.emit(isHalf);
+  }
+
+  hoverStar(isHalf: boolean) {
+    // console.log('hover',isHalf);
+    this.hoverValue.emit(isHalf);
+  }
 }

@@ -64,7 +64,7 @@ export class AlbumComponent implements OnInit {
           this.albumService.getAlbumScore(this.trackParams.albumId),
           this.albumService.getRelateAlbums(this.trackParams.albumId)
         ]).subscribe(([albumInfo, score, relateAlbums]) => {
-          this.score = score;
+          this.score = score / 2;
       /*    this.tracks = albumInfo.tracksInfo.tracks;
           this.total = albumInfo.tracksInfo.trackTotalCount;*/
           this.relateAlbums = relateAlbums.slice(0, 10);

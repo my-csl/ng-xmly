@@ -15,9 +15,9 @@
           <div class="record">
             <div class="rate">
               <div class="star-wrap">
-                <app-rate></app-rate>
+                <app-rate disabled [(ngModel)]="score"></app-rate>
               </div>
-              <span class="score">{{score}}分</span>
+              <span class="score">{{score * 2}}分</span>
             </div>
             <div class="play-count">
               <i appIcon="headset" class="icon"></i>
@@ -57,8 +57,7 @@
           </thead>
           <tbody>
           <tr *ngFor="let track of tracks">
-            <td class="item-checkbox"><label app-checkbox [ngModel]="isChecked(track.trackId)"
-                                             (ngModelChange)="checkChange($event, track)"></label></td>
+            <td class="item-checkbox"><label app-checkbox [ngModel]="isChecked(track.trackId)" (ngModelChange)="checkChange($event, track)"></label></td>
             <td class="item-name">
               <span class="prefix number">{{ track.index }}</span>
               <i appIcon="'play1'" class="prefix icon icon-play"></i>

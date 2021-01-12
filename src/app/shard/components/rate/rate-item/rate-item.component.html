@@ -1,8 +1,11 @@
-<div class="xm-rate-item">
-  <div class="star-wrap back">
-    <i class="icon" appIcon="Star"></i>
+<div [class]="rateItemCls">
+  <div class="star-wrap back" (click)="clickStar(false)" (mousemove)="hoverStar(false)">
+    <ng-template [ngTemplateOutlet]="tpl || defaultTpl"></ng-template>
   </div>
-  <div class="star-wrap front">
-    <i class="icon" appIcon="Star"></i>
+  <div class="star-wrap front" (click)="clickStar(true)" (mousemove)="hoverStar(true)">
+    <ng-template [ngTemplateOutlet]="tpl || defaultTpl"></ng-template>
   </div>
+  <ng-template #defaultTpl>
+    <i  class="icon" appIcon="Star"></i>
+  </ng-template>
 </div>

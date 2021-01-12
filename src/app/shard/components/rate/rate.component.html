@@ -1,4 +1,10 @@
-<div class="xm-rate-warp">
-  <app-rate-item></app-rate-item>
-  <app-rate-item></app-rate-item>
+<div class="xm-rate-warp" (mouseleave)="rateLeave()">
+  <app-rate-item
+    *ngFor="let item of starArray;index as i"
+    (clickValue)="starClick($event, i)"
+    (hoverValue)="starHover($event, i)"
+    [tpl]="tpl"
+    [rateItemCls]="rateItemCls[i] || 'xm-rate-item'"
+  >
+  </app-rate-item>
 </div>

@@ -1,11 +1,13 @@
 import {Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, Renderer2} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {AlbumService, AlbumTrackArgs} from '../../services/apis/album.service';
-import {forkJoin} from 'rxjs';
+import {empty, forkJoin, merge, of, Subscribable, Subscription} from 'rxjs';
 import {AlbumInfo, Anchor, RelateAlbum, Track} from '../../services/apis/types';
 import {CategoryService} from '../../services/business/category.service';
 import {IconType} from '../../shard/directives/icon/type';
 import {storageKeys} from '../../configs';
+import {OverlayRef, OverlayService} from '../../services/tools/overlay.service';
+import {pluck, switchMap} from 'rxjs/operators';
 
 
 interface moreStateType {
@@ -43,12 +45,39 @@ export class AlbumComponent implements OnInit {
   };
   articleHeight: number;
 
+  overlayRef: OverlayRef;
+  subscription: Subscription;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private albumService: AlbumService,
     private categoryService: CategoryService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private overlayService: OverlayService
   ) {
+  }
+
+
+  createMask() {
+    this.overlayRef = this.overlayService.create({fade: true, backgroundColor: 'rgba(0,0,0,.32)'});
+    // console.log('overlayRef', this.overlayRef);
+    this.subscription = merge(
+      this.overlayRef.backdropClick(),
+      this.overlayRef.backdropKeyup().pipe(
+        pluck('key'),
+        switchMap(key => {
+          return key.toLocaleUpperCase() === 'ESCAPE' ? of(key) : empty();
+        })
+      )
+    ).subscribe(() => {
+        this.hideOverlay();
+      }
+    );
+  }
+
+  private hideOverlay() {
+    this.overlayRef.dispose();
+    this.subscription.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -65,8 +94,8 @@ export class AlbumComponent implements OnInit {
           this.albumService.getRelateAlbums(this.trackParams.albumId)
         ]).subscribe(([albumInfo, score, relateAlbums]) => {
           this.score = score / 2;
-      /*    this.tracks = albumInfo.tracksInfo.tracks;
-          this.total = albumInfo.tracksInfo.trackTotalCount;*/
+          /*    this.tracks = albumInfo.tracksInfo.tracks;
+              this.total = albumInfo.tracksInfo.trackTotalCount;*/
           this.relateAlbums = relateAlbums.slice(0, 10);
           this.albumInfo = {...albumInfo.mainInfo, albumId: albumInfo.albumId};
           this.anchor = albumInfo.anchorInfo;

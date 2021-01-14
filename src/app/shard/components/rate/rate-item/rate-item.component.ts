@@ -1,5 +1,4 @@
 import {Component, OnInit, ChangeDetectionStrategy, Input, Output, EventEmitter, TemplateRef, ViewContainerRef} from '@angular/core';
-import {RateComponent} from '../rate.component';
 
 @Component({
   selector: 'app-rate-item',

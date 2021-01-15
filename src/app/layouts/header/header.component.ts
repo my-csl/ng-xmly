@@ -1,4 +1,14 @@
-import {Component, OnInit, ChangeDetectionStrategy, Inject, ElementRef, ChangeDetectorRef, AfterViewInit} from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  ChangeDetectionStrategy,
+  Inject,
+  ElementRef,
+  ChangeDetectorRef,
+  AfterViewInit,
+  Output
+} from '@angular/core';
 import {User} from '../../services/apis/types';
 import {DOCUMENT} from '@angular/common';
 import {fromEvent} from 'rxjs';
@@ -32,6 +42,7 @@ export class HeaderComponent implements OnInit, AfterViewInit {
 
   user: User | undefined;
   fix = false;
+  @Output() showLogin = new EventEmitter<void>();
 
   constructor(
     @Inject(DOCUMENT) private doc: Document,

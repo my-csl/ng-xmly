@@ -11,7 +11,7 @@ export interface OverlayRef {
 }
 
 export interface OverlayConfig {
-  content?: boolean;
+  center?: boolean;
   fade?: boolean;
   backgroundColor?: string;
   responseEvent?: boolean;
@@ -30,7 +30,7 @@ export class OverlayService {
   private backdropClick$ = new Subject<MouseEvent>();
   private backdropKeyup$ = new Subject<KeyboardEvent>();
   readonly defaultConfig: Required<OverlayConfig> = {
-    content: false,
+    center: false,
     fade: false,
     backgroundColor: 'transparent',
     responseEvent: true
@@ -111,9 +111,9 @@ export class OverlayService {
   }
 
   private setConfigs(container: HTMLElement) {
-    const {content, fade, backgroundColor, responseEvent} = this.config;
-    if (content) {
-      this.rd2.addClass(container, 'overlay-content');
+    const {center, fade, backgroundColor, responseEvent} = this.config;
+    if (center) {
+      this.rd2.addClass(container, 'overlay-center');
     }
     if (backgroundColor) {
       this.rd2.setStyle(this.backdropElement, 'background-color', backgroundColor);

@@ -1,5 +1,5 @@
 <div id="xm">
-  <app-header></app-header>
+  <app-header (showLogin)="showLogin = true"></app-header>
   <div class="content">
     <div class="container">
       <div class="breadcrumb-wrap">
@@ -27,7 +27,4 @@
     </div>
   </div>
 </div>
-
-<!--<div class="overlay-container">
-  <div class="overlay-mask overlay-mask-show"></div>
-</div>-->
+<app-login [show]="showLogin" (hide)="showLogin = false"></app-login>

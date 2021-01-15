@@ -1,0 +1,47 @@
+<div
+  class="xm-modal-wrap"
+  #modalWrap
+  @loginAni
+  (@loginAni.done)="animationsDone($event)"
+  *ngIf="visible">
+  <div class="xm-modal">
+    <div class="head">
+      <p>Angular 11</p>
+    </div>
+    <div class="form-wrap">
+      <form class="form" [formGroup]="formValues" (ngSubmit)="submit()">
+        <div class="form-item">
+          <input
+            formControlName="phone"
+            class="form-control xm-input"
+            [class.xm-input-error]="fromControls.phone.showErr"
+            placeholder="手机号"
+            [maxLength]="11"
+            type="phone"/>
+          <p class="form-control-err" *ngIf="fromControls.phone.showErr">
+            <span *ngIf="fromControls.phone.error['required']">请填写手机号</span>
+            <span *ngIf="fromControls.phone.error['pattern']">手机号格式不对</span>
+          </p>
+        </div>
+        <div class="form-item">
+          <input
+            formControlName="password"
+            class="form-control xm-input"
+            [class.xm-input-error]="fromControls.password.showErr"
+            placeholder="密码"
+            type="text"/>
+          <p class="form-control-err" *ngIf="fromControls.password.showErr">
+            <span *ngIf="fromControls.password.error['required']">请填写密码</span>
+            <span *ngIf="fromControls.password.error['minlength']">至少6位</span>
+          </p>
+        </div>
+        <div class="btn-wrap">
+          <button class="btn" appXmBtn [xmBlock]="true" [disabled]="formValues.invalid">登陆</button>
+        </div>
+      </form>
+      <div class="remember">
+        <label app-checkbox>下次自动登陆</label>
+      </div>
+    </div>
+  </div>
+</div>

@@ -45,39 +45,12 @@ export class AlbumComponent implements OnInit {
   };
   articleHeight: number;
 
-  overlayRef: OverlayRef;
-  subscription: Subscription;
-
   constructor(
     private activatedRoute: ActivatedRoute,
     private albumService: AlbumService,
     private categoryService: CategoryService,
-    private cdr: ChangeDetectorRef,
-    private overlayService: OverlayService
+    private cdr: ChangeDetectorRef
   ) {
-  }
-
-
-  createMask() {
-    this.overlayRef = this.overlayService.create({fade: true, backgroundColor: 'rgba(0,0,0,.32)'});
-    // console.log('overlayRef', this.overlayRef);
-    this.subscription = merge(
-      this.overlayRef.backdropClick(),
-      this.overlayRef.backdropKeyup().pipe(
-        pluck('key'),
-        switchMap(key => {
-          return key.toLocaleUpperCase() === 'ESCAPE' ? of(key) : empty();
-        })
-      )
-    ).subscribe(() => {
-        this.hideOverlay();
-      }
-    );
-  }
-
-  private hideOverlay() {
-    this.overlayRef.dispose();
-    this.subscription.unsubscribe();
   }
 
   ngOnInit(): void {

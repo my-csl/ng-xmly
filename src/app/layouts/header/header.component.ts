@@ -14,6 +14,7 @@ import {DOCUMENT} from '@angular/common';
 import {fromEvent} from 'rxjs';
 import {debounceTime, distinctUntilChanged} from 'rxjs/operators';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import {ContextService} from '../../services/apis/context.service';
 
 @Component({
   selector: 'app-header',
@@ -40,15 +41,24 @@ import {animate, state, style, transition, trigger} from '@angular/animations';
 })
 export class HeaderComponent implements OnInit, AfterViewInit {
 
-  user: User | undefined;
+  user: User | null;
   fix = false;
   @Output() showLogin = new EventEmitter<void>();
+  @Output() logout = new EventEmitter<void>();
 
   constructor(
     @Inject(DOCUMENT) private doc: Document,
     private el: ElementRef,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private contextService: ContextService
   ) {
+  }
+
+  ngOnInit(): void {
+    this.contextService.getUser().subscribe(user => {
+      this.user = user;
+      this.cdr.markForCheck();
+    });
   }
 
   ngAfterViewInit(): void {
@@ -66,7 +76,5 @@ export class HeaderComponent implements OnInit, AfterViewInit {
       });
   }
 
-  ngOnInit(): void {
-  }
 
 }

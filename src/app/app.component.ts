@@ -4,6 +4,10 @@ import {Category} from './services/apis/types';
 import {CategoryService} from './services/business/category.service';
 import {Router} from '@angular/router';
 import {combineLatest} from 'rxjs';
+import {WindowService} from './services/tools/window.service';
+import {ContextService} from './services/apis/context.service';
+import {storageKeys} from './configs';
+import {UserService} from './services/apis/user.service';
 
 @Component({
   selector: 'app-root',
@@ -23,12 +27,24 @@ export class AppComponent implements OnInit {
     private albumService: AlbumService,
     private cdr: ChangeDetectorRef,
     private categoryService: CategoryService,
-    private router: Router
+    private router: Router,
+    private windowService: WindowService,
+    private contextService: ContextService,
+    private userService: UserService
   ) {
 
   }
 
   ngOnInit(): void {
+    if (this.windowService.getStorage(storageKeys.remember)) {
+      this.userService.getUserInfo().subscribe(({user, token}) => {
+        this.contextService.setUser(user);
+        this.windowService.setStorage(storageKeys.auth, token);
+      }, error => {
+        console.error(error);
+        this.clearStorage()
+      });
+    }
     this.init();
   }
 
@@ -63,5 +79,18 @@ export class AppComponent implements OnInit {
     // this.categoryService.setCategory(this.currentCategory?.pinyin!);
     this.router.navigateByUrl(`/albums/${item.pinyin}`);
     this.cdr.markForCheck();
+  }
+
+  logout() {
+    this.userService.logout().subscribe(() => {
+      this.contextService.setUser(null);
+      this.clearStorage();
+      alert('退出成功');
+    });
+  }
+
+  private clearStorage() {
+    this.windowService.removeStorage(storageKeys.auth);
+    this.windowService.removeStorage(storageKeys.remember);
   }
 }

@@ -8,12 +8,16 @@ import {
   ViewChild,
   EventEmitter, Inject, PLATFORM_ID
 } from '@angular/core';
-import {empty, merge, of, Subscription, timer} from 'rxjs';
+import {EMPTY, merge, of, Subscription, timer} from 'rxjs';
 import {pluck, switchMap} from 'rxjs/operators';
 import {OverlayRef, OverlayService} from '../../services/tools/overlay.service';
 import {AbstractControl, FormBuilder, ValidationErrors, Validators} from '@angular/forms';
 import {isPlatformBrowser} from '@angular/common';
 import {animate, AnimationEvent, style, transition, trigger} from '@angular/animations';
+import {UserService} from '../../services/apis/user.service';
+import {WindowService} from '../../services/tools/window.service';
+import {storageKeys} from '../../configs';
+import {ContextService} from '../../services/apis/context.service';
 
 interface FromControls {
   phone: FromControl,
@@ -49,17 +53,17 @@ interface FromControl {
     ])
   ]
 })
-export class LoginComponent implements OnInit, AfterViewInit, OnChanges {
+export class LoginComponent implements OnInit, OnChanges {
 
   private overlayRef: OverlayRef;
   private subscription: Subscription;
   @ViewChild('modalWrap') modalWrap: ElementRef;
   formValues = this.fb.group({
-    phone: ['', [
+    phone: ['15179773914', [
       Validators.required,
       Validators.pattern(/^1\d{10}$/)
     ]],
-    password: ['', [
+    password: ['angular11', [
       Validators.required,
       Validators.minLength(6)
     ]]
@@ -67,20 +71,22 @@ export class LoginComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() show = false;
   @Output() hide = new EventEmitter<void>();
   visible = false;
+  remember = true;
 
   constructor(
     private overlayService: OverlayService,
     private rd2: Renderer2,
     private el: ElementRef,
     private fb: FormBuilder,
+    private userService: UserService,
+    private contextService: ContextService,
+    private windowService: WindowService,
     @Inject(PLATFORM_ID) private platformId: object
   ) {
   }
 
   ngOnInit(): void {
-  }
 
-  ngAfterViewInit(): void {
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -97,9 +103,9 @@ export class LoginComponent implements OnInit, AfterViewInit, OnChanges {
       this.subscription = merge(
         this.overlayRef.backdropClick(),
         this.overlayRef.backdropKeyup().pipe(
-          pluck('key'),
+          pluck('key'),   // 提取对象的属性
           switchMap(key => {
-            return key.toLocaleUpperCase() === 'ESCAPE' ? of(key) : empty();
+            return key.toLocaleUpperCase() === 'ESCAPE' ? of(key) : EMPTY;
           })
         )
       ).subscribe(() => {
@@ -127,7 +133,17 @@ export class LoginComponent implements OnInit, AfterViewInit, OnChanges {
   }
 
   submit() {
-    console.log('submit');
+    if (this.formValues.valid) {
+      this.userService.login(this.formValues.value).subscribe(({user, token}) => {
+        this.contextService.setUser(user);
+        this.windowService.setStorage(storageKeys.auth, token);
+        if (this.remember) {
+          this.windowService.setStorage(storageKeys.remember, 'true');
+        }
+        this.hide.emit();
+        alert('登录成功');
+      });
+    }
   }
 
   get fromControls() {

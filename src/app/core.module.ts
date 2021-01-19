@@ -3,13 +3,14 @@ import {BrowserModule} from '@angular/platform-browser';
 import {AppRoutingModule} from './app-routing.module';
 import {HeaderComponent} from './layouts/header/header.component';
 import {BreadcrumbModule} from './shard/components/breadcrumb/breadcrumb.module';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {PagesModule} from './pages/pages.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {LoginComponent} from './layouts/login/login.component';
 import {DirectivesModule} from './shard/directives/directives.module';
 import {CheckboxModule} from './shard/components/checkbox/checkbox.module';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {InterceptService} from './services/apis/intercept.service';
 
 
 @NgModule({
@@ -24,7 +25,15 @@ import {ReactiveFormsModule} from '@angular/forms';
     AppRoutingModule,
     DirectivesModule,
     CheckboxModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
+  ],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: InterceptService,
+      multi: true
+    }
   ]
 })
 export class CoreModule {

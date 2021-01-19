@@ -8,11 +8,11 @@ import {
   ViewChild,
   EventEmitter, Inject, PLATFORM_ID
 } from '@angular/core';
-import {EMPTY, merge, of, Subscription, timer} from 'rxjs';
+import {EMPTY, fromEvent, merge, of, Subscription, timer} from 'rxjs';
 import {pluck, switchMap} from 'rxjs/operators';
 import {OverlayRef, OverlayService} from '../../services/tools/overlay.service';
 import {AbstractControl, FormBuilder, ValidationErrors, Validators} from '@angular/forms';
-import {isPlatformBrowser} from '@angular/common';
+import {DOCUMENT, isPlatformBrowser} from '@angular/common';
 import {animate, AnimationEvent, style, transition, trigger} from '@angular/animations';
 import {UserService} from '../../services/apis/user.service';
 import {WindowService} from '../../services/tools/window.service';
@@ -53,7 +53,7 @@ interface FromControl {
     ])
   ]
 })
-export class LoginComponent implements OnInit, OnChanges {
+export class LoginComponent implements OnInit, OnChanges, AfterViewInit {
 
   private overlayRef: OverlayRef;
   private subscription: Subscription;
@@ -81,12 +81,15 @@ export class LoginComponent implements OnInit, OnChanges {
     private userService: UserService,
     private contextService: ContextService,
     private windowService: WindowService,
-    @Inject(PLATFORM_ID) private platformId: object
+    @Inject(PLATFORM_ID) private platformId: object,
   ) {
   }
 
   ngOnInit(): void {
 
+  }
+
+  ngAfterViewInit(): void {
   }
 
   ngOnChanges(changes: SimpleChanges) {

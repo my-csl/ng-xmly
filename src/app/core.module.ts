@@ -15,7 +15,7 @@ import {InterceptService} from './services/apis/intercept.service';
 
 @NgModule({
   declarations: [HeaderComponent, LoginComponent],
-  exports: [HeaderComponent, BreadcrumbModule, BrowserModule, AppRoutingModule, LoginComponent],
+  exports: [HeaderComponent, BreadcrumbModule, BrowserModule, AppRoutingModule, LoginComponent,DirectivesModule],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -26,7 +26,7 @@ import {InterceptService} from './services/apis/intercept.service';
     DirectivesModule,
     CheckboxModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
   ],
   providers: [
     {

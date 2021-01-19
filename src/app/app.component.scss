@@ -75,3 +75,28 @@
     }
   }
 }
+
+.text-box {
+  width: 200px;
+  position: fixed;
+  top: 40%;
+  left: 40%;
+  background-color: #434543;
+  padding: 20px 10px;
+  .sec {
+    height: 30px;
+    line-height: 30px;
+    background-color: #f5a623;
+  }
+  .sec2 {
+    background-color: #eb2f96;
+    margin: 20px 0;
+    padding: 10px;
+    p {
+      border: 1px solid;
+    }
+  }
+  .sec3 {
+    background-color: #fff7e6;
+  }
+}

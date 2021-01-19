@@ -1,11 +1,13 @@
 <div
   class="xm-modal-wrap"
   #modalWrap
+  appDrag
+  [limitInWindow]="true"
   @loginAni
   (@loginAni.done)="animationsDone($event)"
   *ngIf="visible">
   <div class="xm-modal">
-    <div class="head">
+    <div class="head" appDragHandler>
       <p>Angular 11</p>
     </div>
     <div class="form-wrap">

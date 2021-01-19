@@ -7,7 +7,7 @@ import {
   ElementRef,
   ChangeDetectorRef,
   AfterViewInit,
-  Output
+  Output, Renderer2
 } from '@angular/core';
 import {User} from '../../services/apis/types';
 import {DOCUMENT} from '@angular/common';
@@ -50,7 +50,8 @@ export class HeaderComponent implements OnInit, AfterViewInit {
     @Inject(DOCUMENT) private doc: Document,
     private el: ElementRef,
     private cdr: ChangeDetectorRef,
-    private contextService: ContextService
+    private contextService: ContextService,
+    private rd2: Renderer2
   ) {
   }
 
@@ -75,6 +76,4 @@ export class HeaderComponent implements OnInit, AfterViewInit {
         this.cdr.markForCheck();
       });
   }
-
-
 }

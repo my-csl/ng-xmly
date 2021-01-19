@@ -4,6 +4,7 @@ import {StrTplOutletDirective} from './str-tpl-outlet.directive';
 import {IconDirective} from './icon/icon.directive';
 import {XmBtnDirective} from './xm-btn.directive';
 import { ToggleMoreDirective } from './toggle-more.directive';
+import {DragModule} from './drag/drag.module';
 
 
 @NgModule({
@@ -12,10 +13,12 @@ import { ToggleMoreDirective } from './toggle-more.directive';
     StrTplOutletDirective,
     IconDirective,
     XmBtnDirective,
-    ToggleMoreDirective
+    ToggleMoreDirective,
+    DragModule
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    DragModule
   ]
 })
 export class DirectivesModule {

@@ -4,11 +4,12 @@ import {Observable, throwError} from 'rxjs';
 import {WindowService} from '../tools/window.service';
 import {storageKeys} from '../../configs';
 import {catchError} from 'rxjs/operators';
+import {MessageService} from '../../shard/components/message/message.service';
 
 @Injectable()
 export class InterceptService implements HttpInterceptor {
 
-  constructor(private windowsService: WindowService) {
+  constructor(private windowsService: WindowService, private messageService: MessageService) {
   }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -18,15 +19,16 @@ export class InterceptService implements HttpInterceptor {
     if (needToken) {
       headerConfig = {headers: req.headers.set(storageKeys.auth, auth || '')};
     }
-    return next.handle(req.clone(headerConfig)).pipe(catchError(err => handleError(err)));
+    return next.handle(req.clone(headerConfig)).pipe(catchError(err => this.handleError(err)));
   }
-}
 
-function handleError(err: HttpErrorResponse): Observable<never> {
-  if (typeof err.error.ret === 'number') {
-    alert(err.error.message || '请求失败');
-  } else {
-    alert('请求失败');
+  private handleError(err: HttpErrorResponse): Observable<never> {
+    if (typeof err.error.ret === 'number') {
+      this.messageService.error(err.error.message || '请求失败');
+    } else {
+      this.messageService.error('请求失败');
+    }
+    return throwError(err);
   }
-  return throwError(err);
+
 }

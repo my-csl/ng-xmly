@@ -1,5 +1,6 @@
 <div id="xm">
   <app-header (showLogin)="showLogin = true" (logout)="logout()"></app-header>
+  <button appXmBtn (click)="showMessage()">show message</button>
   <div class="content">
     <div class="container">
       <div class="breadcrumb-wrap">
@@ -13,7 +14,8 @@
               </div>
               <div class="category-box">
                 <ul>
-                  <li (click)="changeCategory(item)" [class.checked]="item.id === currentCategory?.id" *ngFor="let item of categories;">{{item.displayName}}</li>
+                  <li (click)="changeCategory(item)" [class.checked]="item.id === currentCategory?.id"
+                      *ngFor="let item of categories;">{{item.displayName}}</li>
                 </ul>
               </div>
             </div>
@@ -29,11 +31,5 @@
 </div>
 <app-login [show]="showLogin" (hide)="showLogin = false"></app-login>
 
-<!--<div class="text-box" appDrag [limitInWindow]="true">
-  <div class="sec"></div>
-  <div class="sec sec2">
-    <p appDragHandler>appDragHandler</p>
-  </div>
-  <div class="sec sec3" appDragHandler></div>
-</div>-->
+<!--<app-message></app-message>-->
 

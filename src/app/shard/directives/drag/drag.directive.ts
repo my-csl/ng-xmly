@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import {DOCUMENT, isPlatformBrowser} from '@angular/common';
 import {DragHandlerDirective} from './drag-handler.directive';
-import { clamp } from 'lodash';
+import {clamp} from 'lodash';
 
 interface StartPosition {
   x: number,
@@ -25,7 +25,7 @@ interface StartPosition {
 })
 export class DragDirective implements AfterViewInit {
 
-  @Input() private limitInWindow = false
+  @Input() limitInWindow = false;
   private startPosition: StartPosition;
   private hostEl: HTMLElement;
   private movable = false;

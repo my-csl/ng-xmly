@@ -8,6 +8,7 @@ import {WindowService} from './services/tools/window.service';
 import {ContextService} from './services/apis/context.service';
 import {storageKeys} from './configs';
 import {UserService} from './services/apis/user.service';
+import {MessageService} from './shard/components/message/message.service';
 
 @Component({
   selector: 'app-root',
@@ -30,7 +31,8 @@ export class AppComponent implements OnInit {
     private router: Router,
     private windowService: WindowService,
     private contextService: ContextService,
-    private userService: UserService
+    private userService: UserService,
+    private messageService: MessageService
   ) {
 
   }
@@ -85,12 +87,24 @@ export class AppComponent implements OnInit {
     this.userService.logout().subscribe(() => {
       this.contextService.setUser(null);
       this.clearStorage();
-      alert('退出成功');
+      this.messageService.success('退出成功');
     });
   }
 
   private clearStorage() {
     this.windowService.removeStorage(storageKeys.auth);
     this.windowService.removeStorage(storageKeys.remember);
+  }
+
+  showMessage(): void {
+    let xmMessageItemData = this.messageService.info('一段提示', {
+      type: 'error',
+      showClose: true,
+      pauseOnHover: false,
+      animate: true
+    });
+    xmMessageItemData.onClose.subscribe(() => {
+      console.log('onClose');
+    });
   }
 }

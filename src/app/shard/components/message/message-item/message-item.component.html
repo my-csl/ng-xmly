@@ -1,0 +1,14 @@
+<div
+  (mouseenter)="enter()"
+  (mouseleave)="leave()"
+  [@messageAnimation]="message.state"
+  (@messageAnimation.done)="animationDone($event)"
+  [@.disabled]="!message.options.animate"
+  class="xm-message-wrap">
+  <div [class]="messageCls">
+    <div class="content">
+      {{message.content}}
+    </div>
+    <i appIcon="Close" (click)="onClose()" class="close" *ngIf="message.options.showClose"></i>
+  </div>
+</div>

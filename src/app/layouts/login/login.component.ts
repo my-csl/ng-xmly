@@ -18,6 +18,7 @@ import {UserService} from '../../services/apis/user.service';
 import {WindowService} from '../../services/tools/window.service';
 import {storageKeys} from '../../configs';
 import {ContextService} from '../../services/apis/context.service';
+import {MessageService} from '../../shard/components/message/message.service';
 
 interface FromControls {
   phone: FromControl,
@@ -81,6 +82,7 @@ export class LoginComponent implements OnInit, OnChanges, AfterViewInit {
     private userService: UserService,
     private contextService: ContextService,
     private windowService: WindowService,
+    private messageService: MessageService,
     @Inject(PLATFORM_ID) private platformId: object,
   ) {
   }
@@ -144,7 +146,7 @@ export class LoginComponent implements OnInit, OnChanges, AfterViewInit {
           this.windowService.setStorage(storageKeys.remember, 'true');
         }
         this.hide.emit();
-        alert('登录成功');
+        this.messageService.success('登录成功');
       });
     }
   }

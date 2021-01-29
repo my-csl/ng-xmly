@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {User} from './types';
+import {User} from '../apis/types';
 import {Subject} from 'rxjs';
 
 @Injectable({

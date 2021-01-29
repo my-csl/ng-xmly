@@ -1,6 +1,5 @@
 <div id="xm">
   <app-header (showLogin)="showLogin = true" (logout)="logout()"></app-header>
-  <button appXmBtn (click)="showMessage()">show message</button>
   <div class="content">
     <div class="container">
       <div class="breadcrumb-wrap">
@@ -30,6 +29,13 @@
   </div>
 </div>
 <app-login [show]="showLogin" (hide)="showLogin = false"></app-login>
-
-<!--<app-message></app-message>-->
-
+<app-player
+  [trackList]="playInfo.trackList"
+  [currentTrackIndex]="playInfo.currentTrackIndex"
+  [currentTrack]="playInfo.currentTrack"
+  [album]="playInfo.album"
+  [playing]="playInfo.playing"
+  (close)="close()"
+  @fadePlayer
+  *ngIf="showPlayer">
+</app-player>

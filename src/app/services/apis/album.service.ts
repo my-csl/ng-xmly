@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {Album, AlbumInfo, Anchor, Base, Category, MetaData, RelateAlbum, SubCategory, TracksInfo} from './types';
+import {Album, AlbumInfo, Anchor, Base, Category, MetaData, RelateAlbum, SubCategory, TrackAudio, TracksInfo} from './types';
 import {environment} from '../../../environments/environment';
 import {map} from 'rxjs/operators';
 // @ts-ignore
@@ -128,6 +128,16 @@ export class AlbumService {
         // @ts-ignore
         map((res: Base<TracksInfo>) => res.data)
       )
+  }
+
+  // 播放地址
+  trackAudio(id: number): Observable<TrackAudio> {
+    return this.http
+      .get(`${environment.baseUrl}${this.prefix}album-track-url/${id}`)
+      .pipe(
+        // @ts-ignore
+        map((res: Base<TrackAudio>) => res.data)
+      );
   }
 
 }

@@ -4,9 +4,10 @@ import {
   Directive,
   ElementRef,
   HostListener,
-  Inject, Input,
+  Inject, Input, Output,
   PLATFORM_ID,
   QueryList,
+  EventEmitter,
   Renderer2
 } from '@angular/core';
 import {DOCUMENT, isPlatformBrowser} from '@angular/common';
@@ -26,6 +27,7 @@ interface StartPosition {
 export class DragDirective implements AfterViewInit {
 
   @Input() limitInWindow = false;
+  @Output() moveEnd = new EventEmitter<HTMLElement>();
   private startPosition: StartPosition;
   private hostEl: HTMLElement;
   private movable = false;
@@ -50,7 +52,12 @@ export class DragDirective implements AfterViewInit {
   @HostListener('mousedown', ['$event'])
   onMousedown(event: MouseEvent) {
     if (isPlatformBrowser(this.platformId)) {
-      // some方法检测数组里面是否至少有一个元素通过了测试，返回布尔值  contains方法表示传过来的节点是否为该节点的后代节点(包含元素本身)，返回布尔值
+      /*
+      * some方法检测数组里面是否至少有一个元素通过了测试，返回布尔值  contains方法表示传过来的节点是否为该节点的后代节点(包含元素本身)，返回布尔值
+      * @param {event.button === 0} 点击鼠标左键才能触发
+      * @param {!this.handlers.length} 没有appDragHandler子指令触发
+      * @param {this.handlers.some(item => item.el.nativeElement.contains(event.target))} 点击的dom元素为子指令所在的dom元素或它的子元素时为true
+      * */
       const allowDrag = event.button === 0 && (!this.handlers.length || this.handlers.some(item => item.el.nativeElement.contains(event.target)));
       if (allowDrag) {
         event.preventDefault();
@@ -69,6 +76,7 @@ export class DragDirective implements AfterViewInit {
   }
 
   private toggleMoving(movable: boolean) {
+    this.rd2.setStyle(this.hostEl, 'transition', 'none');
     this.movable = movable;
     if (movable) {
       this.dragMoveHandler = this.rd2.listen(this.doc, 'mousemove', this.dragMove.bind(this));
@@ -81,6 +89,7 @@ export class DragDirective implements AfterViewInit {
       if (this.dragEndHandler) {
         this.dragEndHandler();
       }
+      this.moveEnd.emit(this.hostEl);
     }
   }
 
@@ -90,6 +99,7 @@ export class DragDirective implements AfterViewInit {
     const diffX = event.clientX - this.startPosition.x;
     const diffY = event.clientY - this.startPosition.y;
     const {left, top} = this.calculate(diffX, diffY);
+    this.rd2.setStyle(this.el.nativeElement, 'right', 'unset');
     this.rd2.setStyle(this.el.nativeElement, 'left', left + 'px');
     this.rd2.setStyle(this.el.nativeElement, 'top', top + 'px');
   }

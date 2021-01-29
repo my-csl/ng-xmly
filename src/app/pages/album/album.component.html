@@ -28,7 +28,7 @@
             <app-tag class="meta" *ngFor="let item of albumInfo.metas">{{item.metaDisplayName}}</app-tag>
           </div>
           <div class="actions">
-            <button appXmBtn [xmCircle]="true" class="btn">
+            <button appXmBtn [xmCircle]="true" class="btn" (click)="playAll()">
               <i appIcon="play1" class="icon"></i>
               播放全部
             </button>
@@ -58,16 +58,16 @@
           <tbody>
           <tr *ngFor="let track of tracks">
             <td class="item-checkbox"><label app-checkbox [ngModel]="isChecked(track.trackId)" (ngModelChange)="checkChange($event, track)"></label></td>
-            <td class="item-name">
+            <td [class]="itemCls(track.trackId)">
               <span class="prefix number">{{ track.index }}</span>
-              <i appIcon="'play1'" class="prefix icon icon-play"></i>
-              <i appIcon="'pause'" class="prefix icon icon-pause"></i>
+              <i appIcon="'play1'" (click)="toggleTrack(track, 'play')" class="prefix icon icon-play"></i>
+              <i appIcon="'pause'" (click)="toggleTrack(track, 'pause')" class="prefix icon icon-pause"></i>
               <div class="prefix icon icon-playing"><i></i><i></i><i></i><i></i></div>
               <span>{{ track.title }}</span>
             </td>
             <td>
               <i appIcon="'headset'" class="icon"></i>
-              <span>{{ track.playCount | numberFormat }}万</span>
+              <span>{{ track.playCount | numberFormat }}</span>
             </td>
             <td>{{ track.createDateFormat }}</td>
           </tr>
@@ -77,8 +77,8 @@
           <tr>
             <th><label app-checkbox [ngModel]="isCheckedAll()" (ngModelChange)="checkAllChange($event)"></label></th>
             <th class="item-name">
-              <button appXmBtn [xmCircle]="true">播放选中歌曲</button>
-              <button class="btn-add" appXmBtn [xmCircle]="true">添加到播放列表</button>
+              <button [disabled]="!this.trackSelected.length" (click)="play(true)" appXmBtn [xmCircle]="true">播放选中歌曲</button>
+              <button [disabled]="!this.trackSelected.length" (click)="play(false)" class="btn-add" appXmBtn [xmCircle]="true">添加到播放列表</button>
             </th>
           </tr>
           </tfoot>

@@ -73,20 +73,20 @@ export class MessageItemComponent implements OnInit, OnDestroy {
   }
 
   leave() {
-    if (this.timerSub) {
+    if (this.timerSub && this.message.options?.pauseOnHover) {
       this.createTimer(this.message.options?.duration!);
-    }
-  }
-
-  ngOnDestroy(): void {
-    if (this.timerSub) {
-      this.clearTimer();
     }
   }
 
   animationDone(event: AnimationEvent) {
     if (event.toState === 'leave') {
       this.parent.removeMessage(this.message.messageId);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.timerSub) {
+      this.clearTimer();
     }
   }
 }

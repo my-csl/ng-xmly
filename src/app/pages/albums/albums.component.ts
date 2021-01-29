@@ -7,6 +7,7 @@ import {withLatestFrom} from 'rxjs/operators';
 import {forkJoin} from 'rxjs';
 import {WindowService} from '../../services/tools/window.service';
 import {storageKeys} from '../../configs';
+import {PlayerService} from '../../services/business/player.service';
 
 interface CheckedMeta {
   metaRowId: number;
@@ -42,7 +43,8 @@ export class AlbumsComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private categoryService: CategoryService,
     private activatedRoute: ActivatedRoute,
-    private windowService: WindowService
+    private windowService: WindowService,
+    private playerService: PlayerService
   ) {
   }
 
@@ -213,5 +215,15 @@ export class AlbumsComponent implements OnInit {
       // this.windowService.setStorage(storageKeys.pageNum, page.toString());
       this.getAlbums();
     }
+  }
+
+  playAlbum(event: MouseEvent, albumId: number) {
+    event.stopPropagation();
+    this.albumService.getAlbum(albumId.toString()).subscribe(({mainInfo, tracksInfo}) => {
+      const albumInfo = {...mainInfo, albumId};
+      this.playerService.setTrackList(tracksInfo.tracks);
+      this.playerService.setCurrentTrackIndex(0);
+      this.playerService.setAlbum(albumInfo);
+    });
   }
 }

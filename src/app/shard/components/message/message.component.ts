@@ -13,7 +13,7 @@ export class MessageComponent implements OnInit {
   readonly defaultOptions: Required<XmMessageOptions> = {
     type: 'info',
     duration: 3000,
-    showClose: true,
+    showClose: false,
     pauseOnHover: true,
     maxStack: 5,
     animate: true

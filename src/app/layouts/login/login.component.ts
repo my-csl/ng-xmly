@@ -17,7 +17,7 @@ import {animate, AnimationEvent, style, transition, trigger} from '@angular/anim
 import {UserService} from '../../services/apis/user.service';
 import {WindowService} from '../../services/tools/window.service';
 import {storageKeys} from '../../configs';
-import {ContextService} from '../../services/apis/context.service';
+import {ContextService} from '../../services/business/context.service';
 import {MessageService} from '../../shard/components/message/message.service';
 
 interface FromControls {

@@ -1,13 +1,14 @@
-import {Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, Renderer2} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, Renderer2, OnDestroy} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {AlbumService, AlbumTrackArgs} from '../../services/apis/album.service';
-import {empty, forkJoin, merge, of, Subscribable, Subscription} from 'rxjs';
+import {combineLatest, forkJoin, Subject} from 'rxjs';
 import {AlbumInfo, Anchor, RelateAlbum, Track} from '../../services/apis/types';
 import {CategoryService} from '../../services/business/category.service';
 import {IconType} from '../../shard/directives/icon/type';
 import {storageKeys} from '../../configs';
-import {OverlayRef, OverlayService} from '../../services/tools/overlay.service';
-import {pluck, switchMap} from 'rxjs/operators';
+import {PlayerService} from '../../services/business/player.service';
+import {first, takeUntil} from 'rxjs/operators';
+import {MessageService} from '../../shard/components/message/message.service';
 
 
 interface moreStateType {
@@ -22,7 +23,7 @@ interface moreStateType {
   styleUrls: ['./album.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AlbumComponent implements OnInit {
+export class AlbumComponent implements OnInit, OnDestroy {
 
   albumInfo: AlbumInfo;
   score: number;
@@ -44,28 +45,34 @@ export class AlbumComponent implements OnInit {
     icon: 'arrow-down-line'
   };
   articleHeight: number;
+  private destroy$ = new Subject();
+  private currentTrack: Track;
+  private playing: boolean;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private albumService: AlbumService,
     private categoryService: CategoryService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private playerService: PlayerService,
+    private messageService: MessageService
   ) {
   }
 
   ngOnInit(): void {
     this.initPageData();
+    this.watchPlay();
   }
 
   private initPageData() {
-    this.activatedRoute.paramMap.subscribe(
+    this.activatedRoute.paramMap.pipe(takeUntil(this.destroy$)).subscribe(
       albumId => {
         this.trackParams.albumId = albumId.get('albumId')!;
         forkJoin([
           this.albumService.getAlbum(this.trackParams.albumId),
           this.albumService.getAlbumScore(this.trackParams.albumId),
           this.albumService.getRelateAlbums(this.trackParams.albumId)
-        ]).subscribe(([albumInfo, score, relateAlbums]) => {
+        ]).pipe(first()).subscribe(([albumInfo, score, relateAlbums]) => {
           this.score = score / 2;
           /*    this.tracks = albumInfo.tracksInfo.tracks;
               this.total = albumInfo.tracksInfo.trackTotalCount;*/
@@ -171,5 +178,76 @@ export class AlbumComponent implements OnInit {
       });
     }
     return false;
+  }
+
+  playAll() {
+    this.playerService.setTrackList(this.tracks);
+    this.playerService.setAlbum(this.albumInfo);
+    this.playerService.setCurrentTrackIndex(0);
+  }
+
+  toggleTrack(track: Track, state: 'play' | 'pause') {
+    console.log(state);
+    if (state === 'pause') {
+      this.playerService.setPlaying(false);
+    } else {
+      this.getAlbumInfo();
+      this.playerService.playTrack(track);
+    }
+
+  }
+
+  private watchPlay() {
+    combineLatest(
+      this.playerService.getPlaying(),
+      this.playerService.getCurrentTrack(),
+      this.playerService.getAlbum()
+    ).subscribe(([playing, track, album]) => {
+      this.currentTrack = track!;
+      this.playing = playing;
+      this.cdr.markForCheck();
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  itemCls(trackId: number): string {
+    let result = 'item-name ';
+    if (this.currentTrack) {
+      if (this.playing) {
+        if (this.currentTrack.trackId === trackId) {
+          return result + 'item-name-playing';
+        }
+      } else {
+        if (this.currentTrack.trackId === trackId) {
+          return result + 'item-name-pause';
+        }
+      }
+    }
+    return result;
+  }
+
+  play(play: boolean) {
+    if (!this.trackSelected.length) {
+      this.messageService.warning('请先添加歌曲');
+    } else {
+      if (play) {
+        this.playerService.playTracks(this.trackSelected);
+      } else {
+        this.playerService.addTracks(this.trackSelected);
+        this.messageService.info('添加成功');
+      }
+      this.getAlbumInfo();
+      this.checkAllChange(false);
+    }
+  }
+
+  private getAlbumInfo() {
+    if (!this.currentTrack) {
+      this.playerService.setAlbum(this.albumInfo);
+    }
   }
 }

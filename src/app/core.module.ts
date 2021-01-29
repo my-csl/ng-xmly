@@ -12,11 +12,13 @@ import {CheckboxModule} from './shard/components/checkbox/checkbox.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {InterceptService} from './services/apis/intercept.service';
 import {MessageModule} from './shard/components/message/message.module';
+import { PlayerComponent } from './layouts/player/player.component';
+import {PipesModule} from './shard/pipes/pipes.module';
 
 
 @NgModule({
-  declarations: [HeaderComponent, LoginComponent],
-  exports: [HeaderComponent, BreadcrumbModule, BrowserModule, AppRoutingModule, LoginComponent, DirectivesModule, MessageModule],
+  declarations: [HeaderComponent, LoginComponent, PlayerComponent],
+  exports: [HeaderComponent, BreadcrumbModule, BrowserModule, AppRoutingModule, LoginComponent, DirectivesModule, MessageModule, PlayerComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -28,7 +30,8 @@ import {MessageModule} from './shard/components/message/message.module';
     CheckboxModule,
     ReactiveFormsModule,
     FormsModule,
-    MessageModule
+    MessageModule,
+    PipesModule
   ],
   providers: [
     {
